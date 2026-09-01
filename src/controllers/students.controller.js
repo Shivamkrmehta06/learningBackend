@@ -46,4 +46,54 @@ const createStudent = (req,res)=>{
     })
 }
 
-export {getStudents,getStudentsById,createStudent}
+const updateStudent = (req,res)=>{
+    const id = Number(req.params.id)
+    const index = students.findIndex(student=>student.id===id)
+    if(index===-1){
+        res.status(404).json({
+            message:"Student not found"
+        })
+    }
+    students[index] = {
+        id,
+        ...req.body 
+    }
+    res.status(200).json({
+        message:"Student updated",
+        student:students[index]
+    })
+}
+
+const patchStudent = (req,res)=>{
+    const id = Number(req.params.id)
+    const student = students.find(student=>student.id===id)
+    if(!student){
+        return res.status(404).json({
+            message:"Student not found"
+        })
+    }
+    Object.assign(student,req.body)
+    console.log(students);
+    res.status(200).json({
+        message:"Student updated successfully",
+        student
+    })
+}
+
+const deleteStudent = (req,res)=>{
+    const id = Number(req.params.id)
+    const index = students.findIndex(student=>student.id===id)
+    if(index===-1){
+        return res.status(404).json({
+            message:"Student not found"
+        })
+    }
+    students.splice(index,1)
+    console.log(students)
+    return res.status(200).json({
+        message:"Student record is deleted",
+        dataRemaining:students
+    })
+}
+
+export {getStudents,getStudentsById,createStudent,updateStudent,patchStudent,deleteStudent}
