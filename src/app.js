@@ -3,7 +3,6 @@ import router from "./routers/user.router.js"
 import loginRouter from "./routers/login.router.js"
 import postUser from "./routers/postUser.router.js"
 import learn from "./routers/learn.router.js"
-import students from "./data/students.js"
 import studentRouter from "./routers/students.route.js";
 const app = express()
 
@@ -47,14 +46,10 @@ const app = express()
 
 //app.use("/",router)
 
-app.use((req,res,next)=>{
-    console.log("This is Middleware")
-    next()
-})
+app.use(express.json())
 
 app.use("/",loginRouter)
 
-app.use(express.json())
 
 //app.use("/api/v1", postUser);
 
@@ -62,5 +57,17 @@ app.use(express.json())
 
 app.use("/api/v2",studentRouter)
 
+app.use((error, req, res, next) => {
+  if (error.name === "CastError") {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid ID",
+    });
+  }
+  return res.status(500).json({
+    success: false,
+    message: "Internal Server Error",
+  });
+});
 
 export default app
